@@ -19,7 +19,7 @@ function Integration(opt) {
     this.gutterSize = defined(opt.gutterSize, this.viewSize / 4)
     this.max = this.fullSize - this.viewSize
     this.maxGutter = this.max + this.gutterSize
-    this.dipToClosestCell = opt.dipToClosestCell !== false
+    this.dipToClosestCell = opt.dipToClosestCell
     this.lastInput = 0
     this.interacting = false
 
@@ -53,7 +53,7 @@ Integration.prototype.update = function(dt) {
     }
 
     var dipping = !this.interacting
-
+    
     this.value -= this.cellSizeHalf
     var dip = 0
     if (dipping) {

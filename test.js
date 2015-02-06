@@ -1,68 +1,86 @@
-require('canvas-testbed')(render, start)
+var touches = require('touches')
 
-var bounds = {
-    x: 50,
-    y: 50,
-    width: 450,
-    height: 200
-}
+var colors = ['#7bb3d6', '#cfcfcf']
+var width = 512,
+    height = 300
 
-var cellSize = bounds.width/4
-var totalCells = 30
-
-var flick = require('./')({
-    cellSize: cellSize,
-    totalCells: totalCells,
-    viewSize: bounds.width
+//get a 2D canvas context
+var ctx = require('2d-context')({
+    width: width,
+    height: height
 })
 
-var colors = ['gray','darkGray']
+//setup our scroll physics
+var scroller = require('./')({
+    totalCells: 25,
+    viewSize: width,
+    cellSize: width/4,
+    gutterSize: width/4,
+    dipToClosestCell: true
+})
 
-function render(ctx, width, height, dt) {
-    ctx.clearRect(0,0,width,height)
+//start rendering every frame
+require('raf-loop')(draw).start()
+
+//setup DOM when ready
+require('domready')(function() {
+    document.body.appendChild(ctx.canvas)
+    listen(ctx.canvas)
+})
+
+//draw our scene
+function draw(dt) {
+    //tick with milliseconds
+    scroller.update(dt)
+
+    //background
+    ctx.fillStyle = '#3b3b3b'
+    ctx.fillRect(0, 0, width, height)
+
     ctx.save()
+    ctx.translate(-scroller.value, 0)
+    //draw each cell
+    for (var i=0; i<scroller.totalCells; i++) {
+        var cellWidth = scroller.cellSize,
+            cellHeight = height
 
-    ctx.save()
-    flick.update(dt)
-
-    ctx.translate(bounds.x, bounds.y)
-    ctx.beginPath()
-    ctx.rect(0, 0, bounds.width, bounds.height)
-    ctx.clip()
-    ctx.translate(-flick.value, 0)
-    for (var i=0; i<totalCells; i++) {
         ctx.fillStyle = colors[i%colors.length]
-        ctx.fillRect(i*cellSize, 0, cellSize, bounds.height)
+        ctx.fillRect(i*cellWidth, 0, cellWidth, cellHeight)
     }
     ctx.restore()
 
-    ctx.strokeStyle = 'black'
-    ctx.lineWidth = 4
-    ctx.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height)
-    ctx.restore()
+    //border
+    ctx.lineWidth = 6
+    ctx.strokeStyle = '#7bb3d6'
+    ctx.strokeRect(0, 0, width, height)
 }
 
-function start(context, width, height) {
-    var canvas = context.canvas
-    var dragger = require('touches')(window, {
-        target: canvas
-    })
+function listen(element) {
+    //listen for drag events on the window,
+    //but use our canvas as the target
+    var events = touches(window, { target: element, filtered: true })
+    
+    //call the start(), move() and end() functions of scroller physics
     ;['start', 'move', 'end'].forEach(function(name) {
-        dragger.on(name, function(ev, pos) {
-            //ignore start event if out of bounds
-            if (name === 'start' && !inBounds(pos, bounds))
+        events.on(name, function(ev, pos) {
+            //skip touch down if outside of element
+            if (name === 'start' && !within(pos, element))
                 return
+
+            ev.preventDefault()
+
+            //mouse X position
             var x = pos[0]
-            flick[name](x)
+            scroller[name](x)
         })
     })
 }
 
-function inBounds(pos, bounds) {
-    if (!bounds)
-        return true
-    return pos[0] >= bounds.x
-        && pos[1] >= bounds.y
-        && pos[0] < (bounds.x+bounds.width)
-        && pos[1] < (bounds.y+bounds.height)
+//mousedown should be ignored outside the element
+function within(position, element) {
+    var rect = element.getBoundingClientRect()
+    return position[0] >= 0
+        && position[1] >= 0
+        && position[0] <  rect.width
+        && position[1] <  rect.height
 }
