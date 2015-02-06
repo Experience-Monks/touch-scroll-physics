@@ -13,7 +13,7 @@ function Integration(opt) {
     this.momentum = 0
     
     this.totalCells = defined(opt.totalCells, 1)
-    this.cellSize = defined(opt.cellSize, 1)
+    this.cellSize = defined(opt.cellSize, 0)
     this.cellSizeHalf = this.cellSize * 0.5
     this.fullSize = this.cellSize * this.totalCells
     this.viewSize = opt.viewSize || 0
@@ -805,7 +805,7 @@ module.exports = function handler(element, opt) {
         //clear touch if it was lifted
         if (touch && /^touchend/.test(type)) {
             //allow end event to trigger on tracked touch
-            client = getTouch(ev.changedTouches, touch.identifier|0)
+            client = getTouch(ev.changedTouches, touch.identifier||0)
             if (client)
                 touch = null
         }
@@ -815,7 +815,7 @@ module.exports = function handler(element, opt) {
         }
         //get the tracked touch
         else if (touch)
-            client = getTouch(ev.changedTouches, touch.identifier|0)
+            client = getTouch(ev.changedTouches, touch.identifier||0)
 
         return client
     }
@@ -873,7 +873,7 @@ arguments[4][3][0].apply(exports,arguments)
 var touches = require('touches')
 
 var colors = ['#7bb3d6', '#cfcfcf']
-var width = 512,
+var width = Math.min(window.innerWidth-20, 512),
     height = 300
 
 //get a 2D canvas context
@@ -887,7 +887,7 @@ var scroller = require('./')({
     totalCells: 25,
     viewSize: width,
     cellSize: width/4,
-    gutterSize: width/4,
+    gutterSize: width/2,
     dipToClosestCell: true
 })
 
@@ -897,6 +897,7 @@ require('raf-loop')(draw).start()
 //setup DOM when ready
 require('domready')(function() {
     document.body.appendChild(ctx.canvas)
+    document.body.style.overflow = 'hidden'
     listen(ctx.canvas)
 })
 
@@ -930,16 +931,19 @@ function draw(dt) {
 function listen(element) {
     //listen for drag events on the window,
     //but use our canvas as the target
-    var events = touches(window, { target: element, filtered: true })
+    var events = touches(window, { 
+        target: element,
+         filtered: true 
+     })
     
     //call the start(), move() and end() functions of scroller physics
     ;['start', 'move', 'end'].forEach(function(name) {
         events.on(name, function(ev, pos) {
+            ev.preventDefault()
+            
             //skip touch down if outside of element
             if (name === 'start' && !within(pos, element))
                 return
-
-            ev.preventDefault()
 
             //mouse X position
             var x = pos[0]
