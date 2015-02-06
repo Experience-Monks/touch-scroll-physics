@@ -12,7 +12,7 @@ function Integration(opt) {
     this.momentum = 0
     
     this.totalCells = defined(opt.totalCells, 1)
-    this.cellSize = defined(opt.cellSize, 1)
+    this.cellSize = defined(opt.cellSize, 0)
     this.cellSizeHalf = this.cellSize * 0.5
     this.fullSize = this.cellSize * this.totalCells
     this.viewSize = opt.viewSize || 0
