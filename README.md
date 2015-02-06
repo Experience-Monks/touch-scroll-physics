@@ -2,6 +2,8 @@
 
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
+[(demo)](http://jam3.github.io/touch-scroll-physics) - [(source)](test.js)
+
 Physics for a touch-based scroll panel. Assumes a single dimension but could easily be extended to two or more.
 
 Works best with scroll panes that have a fixed bounding region and need to "bounce" on either end. Can also "dip" into the cell edges (for example: carousels, list views, grids).
