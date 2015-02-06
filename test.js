@@ -15,7 +15,7 @@ var scroller = require('./')({
     totalCells: 25,
     viewSize: width,
     cellSize: width/4,
-    gutterSize: width/4,
+    gutterSize: width/2,
     dipToClosestCell: true
 })
 
