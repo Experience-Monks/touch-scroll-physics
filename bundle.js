@@ -874,7 +874,7 @@ var touches = require('touches')
 
 var colors = ['#7bb3d6', '#cfcfcf']
 var width = Math.min(window.innerWidth-20, 512),
-    height = 300
+    height = Math.min(window.innerHeight-20, 300)
 
 //get a 2D canvas context
 var ctx = require('2d-context')({
