@@ -10,7 +10,8 @@
   ],
   "dependencies": {
     "clamp": "^1.0.1",
-    "defined": "0.0.0"
+    "defined": "0.0.0",
+    "touches": "^1.0.3"
   },
   "devDependencies": {
     "2d-context": "^1.2.0",

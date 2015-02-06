@@ -1,7 +1,7 @@
 var touches = require('touches')
 
 var colors = ['#7bb3d6', '#cfcfcf']
-var width = 512,
+var width = Math.min(window.innerWidth-20, 512),
     height = 300
 
 //get a 2D canvas context
@@ -25,6 +25,7 @@ require('raf-loop')(draw).start()
 //setup DOM when ready
 require('domready')(function() {
     document.body.appendChild(ctx.canvas)
+    document.body.style.overflow = 'hidden'
     listen(ctx.canvas)
 })
 
@@ -58,16 +59,19 @@ function draw(dt) {
 function listen(element) {
     //listen for drag events on the window,
     //but use our canvas as the target
-    var events = touches(window, { target: element, filtered: true })
+    var events = touches(window, { 
+        target: element,
+         filtered: true 
+     })
     
     //call the start(), move() and end() functions of scroller physics
     ;['start', 'move', 'end'].forEach(function(name) {
         events.on(name, function(ev, pos) {
+            ev.preventDefault()
+            
             //skip touch down if outside of element
             if (name === 'start' && !within(pos, element))
                 return
-
-            ev.preventDefault()
 
             //mouse X position
             var x = pos[0]
