@@ -1,8 +1,8 @@
 var touches = require('touches')
 
 var colors = ['#7bb3d6', '#cfcfcf']
-var width = Math.min(window.innerWidth-20, 512),
-    height = Math.min(window.innerHeight-20, 300)
+var width = Math.min(window.innerWidth-20, 712),
+    height = Math.min(window.innerHeight-20, 400)
 
 //get a 2D canvas context
 var ctx = require('2d-context')({
@@ -14,7 +14,7 @@ var ctx = require('2d-context')({
 var scroller = require('./')({
     totalCells: 25,
     viewSize: width,
-    cellSize: width/4,
+    cellSize: width/2,
     gutterSize: width/2,
     dipToClosestCell: true
 })
