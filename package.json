@@ -1,6 +1,6 @@
 {
   "name": "touch-scroll-physics",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "integrates touch scrolling physics",
   "main": "index.js",
   "license": "MIT",
