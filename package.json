@@ -10,8 +10,7 @@
   ],
   "dependencies": {
     "clamp": "^1.0.1",
-    "defined": "0.0.0",
-    "touches": "^1.0.3"
+    "defined": "0.0.0"
   },
   "devDependencies": {
     "2d-context": "^1.2.0",
@@ -19,7 +18,7 @@
     "domready": "^1.0.7",
     "garnish": "^1.0.5",
     "raf-loop": "^1.0.1",
-    "touches": "^1.0.2",
+    "touches": "^1.0.3",
     "wtch": "^1.1.0",
     "wzrd": "^1.2.1"
   },
