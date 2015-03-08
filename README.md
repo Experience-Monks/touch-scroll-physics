@@ -63,9 +63,9 @@ Called to initiate a scroll event with the given value (e.g. X mouse position).
 
 Called to signal a move event (e.g. mouse move X).
 
-#### `scroller.end(value)`
+#### `scroller.end()`
 
-Called to end the scroll state at the given position (e.g. mouse up at X).
+Called to end the scroll state (e.g. mouse up).
 
 #### `scroller.value`
 

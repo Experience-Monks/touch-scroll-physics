@@ -13,13 +13,12 @@ function Integration(opt) {
     
     this.totalCells = defined(opt.totalCells, 1)
     this.cellSize = defined(opt.cellSize, 0)
-    this.cellSizeHalf = this.cellSize * 0.5
-    this.fullSize = this.cellSize * this.totalCells
     this.viewSize = opt.viewSize || 0
     this.gutterSize = defined(opt.gutterSize, this.viewSize / 4)
-    this.max = this.fullSize - this.viewSize
-    this.maxGutter = this.max + this.gutterSize
     this.dipToClosestCell = opt.dipToClosestCell
+
+    this.updateSize();
+
     this.lastInput = 0
     this.interacting = false
 
@@ -93,7 +92,14 @@ Integration.prototype.move = function(value) {
     }
 }
 
-Integration.prototype.end = function(value) {
+Integration.prototype.updateSize = function() {
+    this.cellSizeHalf = this.cellSize * 0.5
+    this.fullSize = Math.max(this.viewSize, this.cellSize * this.totalCells)
+    this.max = this.fullSize - this.viewSize
+    this.maxGutter = this.max + this.gutterSize
+}
+
+Integration.prototype.end = function() {
     if (this.interacting) {
         this.interacting = false
         this.momentum = this.inputDeltas.reduce(function(a, b) {
