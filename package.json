@@ -19,12 +19,13 @@
     "garnish": "^1.0.5",
     "raf-loop": "^1.0.1",
     "touches": "^1.0.3",
+    "uglify-js": "^2.4.16",
     "wtch": "^1.1.0",
     "wzrd": "^1.2.1"
   },
   "scripts": {
     "start": "wzrd test.js:bundle.js -- -d | wtch | garnish",
-    "build": "browserify test.js > bundle.js"
+    "build": "browserify test.js | uglifyjs -cm > bundle.js"
   },
   "keywords": [
     "scroll",
