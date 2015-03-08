@@ -64,9 +64,9 @@ function draw(dt) {
 function listen(element) {
     //listen for drag events on the window,
     //but use our canvas as the target
-    var events = touches(window, { 
+    var events = touches(document, { 
         target: element,
-         filtered: true 
+        filtered: true 
      })
     
     //call the start(), move() and end() functions of scroller physics
@@ -83,11 +83,6 @@ function listen(element) {
             scroller[name](x)
         })
     })
-
-    //some special handling for iFrames
-    parent.document.onmouseup = function() {
-        scroller.end()
-    }
 }
 
 //mousedown should be ignored outside the element
