@@ -14,13 +14,12 @@ function Integration(opt) {
     
     this.totalCells = defined(opt.totalCells, 1)
     this.cellSize = defined(opt.cellSize, 0)
-    this.cellSizeHalf = this.cellSize * 0.5
-    this.fullSize = this.cellSize * this.totalCells
     this.viewSize = opt.viewSize || 0
     this.gutterSize = defined(opt.gutterSize, this.viewSize / 4)
-    this.max = this.fullSize - this.viewSize
-    this.maxGutter = this.max + this.gutterSize
     this.dipToClosestCell = opt.dipToClosestCell
+
+    this.updateSize();
+
     this.lastInput = 0
     this.interacting = false
 
@@ -94,7 +93,14 @@ Integration.prototype.move = function(value) {
     }
 }
 
-Integration.prototype.end = function(value) {
+Integration.prototype.updateSize = function() {
+    this.cellSizeHalf = this.cellSize * 0.5
+    this.fullSize = Math.max(this.viewSize, this.cellSize * this.totalCells)
+    this.max = this.fullSize - this.viewSize
+    this.maxGutter = this.max + this.gutterSize
+}
+
+Integration.prototype.end = function() {
     if (this.interacting) {
         this.interacting = false
         this.momentum = this.inputDeltas.reduce(function(a, b) {
@@ -616,6 +622,7 @@ for(var i = 0; i < vendors.length && !raf; i++) {
       || global[vendors[i] + 'CancelRequest' + suffix]
 }
 
+
 // Some versions of FF have rAF but not cAF
 if(!raf || !caf) {
   isNative = false
@@ -663,6 +670,8 @@ if(!raf || !caf) {
     }
   }
 }
+
+console.log(isNative)
 
 module.exports = function(fn) {
   // Wrap in a new function to prevent
@@ -873,8 +882,13 @@ arguments[4][3][0].apply(exports,arguments)
 var touches = require('touches')
 
 var colors = ['#7bb3d6', '#cfcfcf']
-var width = Math.min(window.innerWidth-20, 512),
-    height = Math.min(window.innerHeight-20, 300)
+var width = window.innerWidth-20
+var height = window.innerHeight-20
+
+if (!inIFrame()) {
+    width = Math.min(width, 712)
+    height = Math.min(height, 400)
+}
 
 //get a 2D canvas context
 var ctx = require('2d-context')({
@@ -950,6 +964,11 @@ function listen(element) {
             scroller[name](x)
         })
     })
+
+    //some special handling for iFrames
+    parent.document.onmouseup = function() {
+        scroller.end()
+    }
 }
 
 //mousedown should be ignored outside the element
@@ -959,5 +978,14 @@ function within(position, element) {
         && position[1] >= 0
         && position[0] <  rect.width
         && position[1] <  rect.height
+}
+
+//quick check to see if we are in an iframe
+function inIFrame() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
 }
 },{"./":1,"2d-context":2,"domready":7,"raf-loop":8,"touches":13}]},{},[15]);
