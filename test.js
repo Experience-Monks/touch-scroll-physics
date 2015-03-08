@@ -1,8 +1,13 @@
 var touches = require('touches')
 
 var colors = ['#7bb3d6', '#cfcfcf']
-var width = Math.min(window.innerWidth-20, 712),
-    height = Math.min(window.innerHeight-20, 400)
+var width = window.innerWidth-20
+var height = window.innerHeight-20
+
+if (!inIFrame()) {
+    width = Math.min(width, 712)
+    height = Math.min(height, 400)
+}
 
 //get a 2D canvas context
 var ctx = require('2d-context')({
@@ -14,7 +19,7 @@ var ctx = require('2d-context')({
 var scroller = require('./')({
     totalCells: 25,
     viewSize: width,
-    cellSize: width/2,
+    cellSize: width/4,
     gutterSize: width/2,
     dipToClosestCell: true
 })
@@ -78,6 +83,11 @@ function listen(element) {
             scroller[name](x)
         })
     })
+
+    //some special handling for iFrames
+    parent.document.onmouseup = function() {
+        scroller.end()
+    }
 }
 
 //mousedown should be ignored outside the element
@@ -87,4 +97,13 @@ function within(position, element) {
         && position[1] >= 0
         && position[0] <  rect.width
         && position[1] <  rect.height
+}
+
+//quick check to see if we are in an iframe
+function inIFrame() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
 }

@@ -99,7 +99,7 @@ Integration.prototype.updateSize = function() {
     this.maxGutter = this.max + this.gutterSize
 }
 
-Integration.prototype.end = function(value) {
+Integration.prototype.end = function() {
     if (this.interacting) {
         this.interacting = false
         this.momentum = this.inputDeltas.reduce(function(a, b) {
