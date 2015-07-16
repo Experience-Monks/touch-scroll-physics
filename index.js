@@ -1,5 +1,7 @@
 var clamp = require('clamp')
 var defined = require('defined')
+var almostEqual = require('almost-equal')
+var epsilon = almostEqual.FLT_EPSILON
 
 module.exports = function integration(opt) {
     return new Integration(opt)
@@ -10,6 +12,8 @@ function Integration(opt) {
 
     this.value = 0
     this.momentum = 0
+    this.upperBound = opt.upperBound
+    this.lowerBound = opt.lowerBound
     
     this.totalCells = defined(opt.totalCells, 1)
     this.cellSize = defined(opt.cellSize, 0)
@@ -34,9 +38,11 @@ function Integration(opt) {
 }
 
 Integration.prototype.update = function(dt) {
-    var isBefore = this.value < 0
-    var isAfter = this.value > this.max
-    var isInside = !isBefore && !isAfter
+    var isBefore = this.value < this.min &&
+        !almostEqual(this.value, this.min, epsilon, epsilon)
+    var isAfter = this.value > this.max &&
+        !almostEqual(this.value, this.max, epsilon, epsilon)
+    var isInside = !isBefore && !isAfter && this.min !== this.max
 
     //ease input at edges
     if(isBefore) {
@@ -59,7 +65,7 @@ Integration.prototype.update = function(dt) {
         if (isInside && this.dipToClosestCell) {
             dip = (((this.value % this.cellSize) + this.cellSize) % this.cellSize) - this.cellSizeHalf 
         } else if(isBefore) {
-            dip = this.value + this.cellSizeHalf
+            dip = this.value - this.min + this.cellSizeHalf
         } else if(isAfter) {
             dip = this.value - this.max + this.cellSizeHalf
         }
@@ -95,7 +101,8 @@ Integration.prototype.move = function(value) {
 Integration.prototype.updateSize = function() {
     this.cellSizeHalf = this.cellSize * 0.5
     this.fullSize = Math.max(this.viewSize, this.cellSize * this.totalCells)
-    this.max = this.fullSize - this.viewSize
+    this.min = this.lowerBound || 0
+    this.max = this.upperBound || this.fullSize - this.viewSize
     this.maxGutter = this.max + this.gutterSize
 }
 
