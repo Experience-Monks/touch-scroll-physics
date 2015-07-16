@@ -9,6 +9,7 @@
     "Tomasz Dysinski"
   ],
   "dependencies": {
+    "almost-equal": "^1.0.0",
     "clamp": "^1.0.1",
     "defined": "0.0.0"
   },
