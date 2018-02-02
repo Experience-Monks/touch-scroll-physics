@@ -105,7 +105,6 @@ Integration.prototype.end = function() {
         this.momentum = this.inputDeltas.reduce(function(a, b) {
             return Math.abs(a) > Math.abs(b) ? a : b
         }, 0)
-        this.delta = 0
         for (var i = 0; i < this.inputDeltaHistoryMax; i++)
             this.inputDeltas[i] = 0
     }
